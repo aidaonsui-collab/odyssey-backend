@@ -1,16 +1,17 @@
 import pg from 'pg'
 const { Pool } = pg
 
-const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRES_URL
+const DATABASE_URL = process.env.DATABASE_URL || process.env.DATABASE_PRIVATE_URL || process.env.DATABASE_PUBLIC_URL || process.env.POSTGRES_URL
 
 if (!DATABASE_URL) {
-  console.error('❌ DATABASE_URL or POSTGRES_URL not set')
+  console.error('❌ DATABASE_URL not set')
   process.exit(1)
 }
 
 const pool = new Pool({
   connectionString: DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  ssl: false, // Railway private network
+  connectionTimeoutMillis: 10000,
 })
 
 const schema = `

@@ -6,16 +6,23 @@ const { Pool } = pg
 const app = express()
 const PORT = process.env.PORT || 3000
 
-// Database connection
-const DATABASE_URL = process.env.DATABASE_URL || process.env.DATABASE_PUBLIC_URL || process.env.POSTGRES_URL
+// Database connection - use Railway service reference
+const DATABASE_URL = process.env.DATABASE_URL || process.env.DATABASE_PRIVATE_URL || process.env.DATABASE_PUBLIC_URL || process.env.POSTGRES_URL
+
 if (!DATABASE_URL) {
-  console.error('❌ DATABASE_URL, DATABASE_PUBLIC_URL, or POSTGRES_URL not set')
+  console.error('❌ DATABASE_URL not set')
+  console.error('Available vars:', Object.keys(process.env).filter(k => k.includes('DATABASE') || k.includes('POSTGRES')))
   process.exit(1)
 }
 
+console.log('📊 Connecting to database:', DATABASE_URL.split('@')[1] || 'unknown')
+
 const pool = new Pool({
   connectionString: DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  ssl: false, // Railway private network doesn't need SSL
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
 })
 
 // Middleware
