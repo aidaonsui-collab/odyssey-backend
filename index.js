@@ -7,9 +7,9 @@ const app = express()
 const PORT = process.env.PORT || 3000
 
 // Database connection
-const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRES_URL
+const DATABASE_URL = process.env.DATABASE_URL || process.env.DATABASE_PUBLIC_URL || process.env.POSTGRES_URL
 if (!DATABASE_URL) {
-  console.error('❌ DATABASE_URL or POSTGRES_URL not set')
+  console.error('❌ DATABASE_URL, DATABASE_PUBLIC_URL, or POSTGRES_URL not set')
   process.exit(1)
 }
 
